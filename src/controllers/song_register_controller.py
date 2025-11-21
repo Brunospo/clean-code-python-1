@@ -1,3 +1,6 @@
+from src.models.entities.music import Music
+from src.models.repositories.musics_repository import music_repository
+
 class SongRegisterController:
     def insert(self, new_song_informations: dict) -> dict:
         try:
@@ -19,10 +22,20 @@ class SongRegisterController:
             raise Exception('Invalid song year')
 
     def __verify_if_song_already_exists(self, new_song_informations: dict) -> None:
-        pass
+        new_song_title = new_song_informations['title']
+        search_response = music_repository.find_music(new_song_title)
+
+        if search_response is not None:
+            raise Exception('Music already registered')
 
     def __insert_song(self, new_song_informations: dict) -> None:
-        pass
+        new_music = Music(
+            title = new_song_informations['title'],
+            artist = new_song_informations['artist'],
+            year = int(new_song_informations['year'])
+        )
+
+        music_repository.insert_music(new_music)
 
     def __format_response(self, new_song_informations: dict) -> dict:
         return {
